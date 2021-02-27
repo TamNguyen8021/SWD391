@@ -1,21 +1,25 @@
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Random;
 
 class CricketData extends Observable {
 	int runs;
 	int wickets;
 	float overs;
-
+	
 	public CricketData() {
 	}
 
-// This method is used update displays
-// when data changes
+	// This method is used update displays
+	// when data changes
 	public void dataChanged() {
-//update data: runs, wickets, overs
-
+		//update data: runs, wickets, overs
+		this.runs = 90;
+		this.wickets = 2;
+		this.overs = 10;
 		setChanged();
-		notifyObservers(/* pass the above data here */);
+		notifyObservers(this);
 	}
 }
 
@@ -30,11 +34,13 @@ class AverageScoreDisplay implements Observer {
 
 	@Override
 	public void update(Observable arg0, Object data) {
-//extract runs and overs from data and calculate runRate and
-//predictedScore to the following formula:
-//runRate =runs/overs
-//predictedScore = runRate * 50
-
+		//extract runs and overs from data and calculate runRate and
+		//predictedScore to the following formula:
+		//runRate =runs/overs
+		//predictedScore = runRate * 50
+		CricketData cricketData = (CricketData) data;
+		runRate = cricketData.runs / cricketData.overs;
+		predictedScore = Math.round(runRate * 50);
 		display();
 	}
 }
@@ -50,9 +56,11 @@ class CurrentScoreDisplay implements Observer {
 
 	@Override
 	public void update(Observable o, Object data) {
-
-//update runs, wickets, overs from data
-
+		//update runs, wickets, overs from data
+		CricketData cricketData = (CricketData) data;
+		this.runs = cricketData.runs;
+		this.wickets = cricketData.wickets;
+		this.overs = cricketData.overs;
 		display();
 	}
 }
@@ -60,21 +68,21 @@ class CurrentScoreDisplay implements Observer {
 public class Test {
 
 	public static void main(String[] args) {
-// TODO Auto-generated method stub
-// TODO Auto-generated method stub
-// create objects for testing
+		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
+		// create objects for testing
 		AverageScoreDisplay averageScoreDisplay = new AverageScoreDisplay();
 		CurrentScoreDisplay currentScoreDisplay = new CurrentScoreDisplay();
 
-// pass the displays to Cricket data
+		// pass the displays to Cricket data
 		CricketData cricketData = new CricketData();
 
-// register display elements
+		// register display elements
 		cricketData.addObserver(averageScoreDisplay);
 		cricketData.addObserver(currentScoreDisplay);
 
-// in real app you would have some logic to
-// call this function when data changes
+		// in real app you would have some logic to
+		// call this function when data changes
 		cricketData.dataChanged();
 	}
 }
